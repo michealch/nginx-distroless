@@ -1,0 +1,33 @@
+# Use NGINX Unprivileged as the base image
+FROM nginxinc/nginx-unprivileged:1.25.3-bookworm AS base
+
+# Use distroless as the final base image
+FROM gcr.io/distroless/base-debian12:nonroot AS final
+
+# Copy NGINX binary and configuration files
+COPY --from=base /usr/sbin/nginx /usr/sbin/nginx
+COPY --from=base /etc/nginx /etc/nginx
+
+# Copy NGINX HTML directory
+COPY --from=base /usr/share/nginx/html /usr/share/nginx/html
+
+# Copy NGINX cache and log directories with proper permissions
+COPY --from=base --chmod=777 /var/cache/nginx /var/cache/nginx
+COPY --from=base --chmod=777 /var/log/nginx /var/log/nginx
+
+# Copy required shared libraries
+COPY --from=base /lib/x86_64-linux-gnu/libcrypt.so.1 \
+    /lib/x86_64-linux-gnu/libpcre2-8.so.0 \
+    /lib/x86_64-linux-gnu/libssl.so.3 \
+    /lib/x86_64-linux-gnu/libcrypto.so.3 \
+    /lib/x86_64-linux-gnu/libz.so.1 \
+    /lib/x86_64-linux-gnu/
+
+# Set the user to run NGINX
+USER nonroot
+
+# Expose the NGINX port
+EXPOSE 8080
+
+# Start NGINX
+CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
