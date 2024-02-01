@@ -2,11 +2,7 @@ name: Build and Push Docker Image
 
 on:
   schedule:
-    # Runs at 00:00 UTC every Sunday
-    - cron: '0 0 * * 0'
-  pull_request:
-    branches:
-      - main
+    - cron: '0 2 * * *'
   push:
     branches:
       - main
@@ -25,9 +21,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Dockerfile
-          load: true 
-          tags: distrolessdevops/nginx-distroless:latest 
+          file: ./Dockerfile-1.25
+          tags: distrolessdevops/nginx-distroless:1.25
 
   push:
     runs-on: self-hosted
@@ -44,10 +39,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Dockerfile
+          file: ./Dockerfile-1.25
           push: true
-          tags: distrolessdevops/nginx-distroless:latest
+          tags: distrolessdevops/nginx-distroless:1.25.3
 
       - name: Logout from Docker Hub
-        if: always()
         run: docker logout
