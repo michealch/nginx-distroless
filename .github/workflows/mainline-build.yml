@@ -3,6 +3,10 @@ name: Build and Push Docker Image
 on:
   schedule:
     - cron: '0 3 * * *'
+    
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
@@ -22,6 +26,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile-mainline
+          load: true
           tags: distrolessdevops/nginx-distroless:latest
 
   push:
