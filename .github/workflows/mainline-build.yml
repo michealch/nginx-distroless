@@ -27,7 +27,6 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v8,linux/arm/v7,linux/arm/v6
           file: ./Dockerfile-mainline
-          load: true
           tags: distrolessdevops/nginx-distroless:latest
 
   push:
